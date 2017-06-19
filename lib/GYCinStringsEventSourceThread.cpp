@@ -5,7 +5,8 @@ using std::chrono::milliseconds;
 using std::string;
 using namespace GYStudyEvents;
 
-
+//NOTICE: both can be replaced directly with `auto` (C++14 Return type deduction),
+//however here i'll skip the auto...
 //Map member const iterator
 typedef std::map<string, GYEventListener*>::const_iterator	GYCIter;
 ////Map member non-const iterator
@@ -32,18 +33,17 @@ GYCinStringsEventSourceThread::~GYCinStringsEventSourceThread()
 }
 
 
-bool GYCinStringsEventSourceThread::setListenerRegistration
-										(GYEventListener& inClient)
+bool GYCinStringsEventSourceThread::setListenerRegistration(GYEventListener& inClient)
 {//not using `std::to_string`
 	string addr(//copy ctor
 		GYUtility::getPointerAddressAsString<GYEventListener>(&inClient)
 	);
 	bool toRet = false;
+	//`m_lock_map.lock()`         ->
+	//for more than one lock objz -> std::lock(lock1, lock2, ...);
 	if (m_lock_map.try_lock_for(milliseconds(GY_THREAD_LOCK_WAIT_MS_MAX)))
 	{
-		//`m_lock_map.lock()`         ->
-		//for more than one lock objz -> std::lock(lock1, lock2, ...);
-		GYCIter iter = m_listeners.find(addr);//can also `auto iter = ...`
+		GYCIter iter = m_listeners.find(addr);//can also `auto iter = x.find()`
 		if (iter == m_listeners.end())
 		{//not in map
 			inClient.hookEvent(&m_eventsSource);//hook to NON const obj
@@ -57,8 +57,7 @@ bool GYCinStringsEventSourceThread::setListenerRegistration
 }
 
 
-bool GYCinStringsEventSourceThread::setListenerDeregistration(
-											GYEventListener& inDeReg)
+bool GYCinStringsEventSourceThread::setListenerDeregistration(GYEventListener& inDeReg)
 {
 	string addr(
 		GYUtility::getPointerAddressAsString<GYEventListener>(&inDeReg)

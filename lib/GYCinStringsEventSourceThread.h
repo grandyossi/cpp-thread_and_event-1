@@ -27,10 +27,10 @@ public:
 	void waitJoin();
 
 private:
-	std::map<string, GYEventListener*>		m_listeners = { };
+	std::map<string, GYEventListener*> 	m_listeners = { };
 	//timed <-> `try_lock_for` / `try_lock_until`
-	std::timed_mutex						m_listeners_mutex = { };
-	std::unique_lock<std::timed_mutex>		m_lock_map = {
+	std::timed_mutex 			m_listeners_mutex = { };
+	std::unique_lock<std::timed_mutex> 	m_lock_map = {
 												m_listeners_mutex,
 												std::defer_lock
 											};
@@ -39,13 +39,13 @@ private:
 	//but in ctor.
 	std::thread			m_threadObject;
 	//
-	GYEventSource		m_eventsSource = { };
+	GYEventSource			m_eventsSource = { };
 	bool				m_isDisposed = false;
 	//
 	void				mf_threadProc();//both cant be const ----
 	void				mf_raiseEvent(const string&); //----
 	//QUIT indication constant
-	const string		m_quit = { u8"!Q!" };
+	const string			m_quit = { u8"!Q!" };
 };
 END_GY_NAMESPACE_STUDY_EVENTS
 #endif //!GY_EVENT_SOURCE_THREAD
